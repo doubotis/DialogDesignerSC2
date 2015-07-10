@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import jogl.DDSImage;
 
 /**
@@ -41,6 +43,7 @@ import jogl.DDSImage;
 public class DialogPropertyImage extends javax.swing.JDialog implements IDialogReturn {
     
     private SImage mImage = SImage.NONE;
+    private List<SFile> mImages;
 
     /**
      * Creates new form DialogPropertyText
@@ -50,6 +53,24 @@ public class DialogPropertyImage extends javax.swing.JDialog implements IDialogR
         initComponents();
         
         listImages();
+        
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                refreshFilter();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                refreshFilter();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                refreshFilter();
+            }
+        });
     }
     
     @Override
@@ -82,8 +103,10 @@ public class DialogPropertyImage extends javax.swing.JDialog implements IDialogR
                 while (it.hasNext())
                 {
                     String fileName = it.next().getName();
-                    if (fileName != null)
+                    if (fileName != null && (fileName.endsWith(".dds") || fileName.endsWith(".tga")))
+                    {
                         files.add(new SFile(mpqStrings.get(i),fileName));
+                    }
                 }
                 
             } catch (Exception e) {}
@@ -91,14 +114,14 @@ public class DialogPropertyImage extends javax.swing.JDialog implements IDialogR
         
         // Now send lists to good ones.
         List<SFile> imageList = new ArrayList<SFile>();
+        mImages = files;
         
         DefaultListModel<SFile> adapter = new DefaultListModel<SFile>();
         lstImages.setModel(adapter);
         
-        for (SFile file : files)
+        for (SFile file : mImages)
         {
-            if (file.getFilePath().endsWith(".dds") || file.getFilePath().endsWith(".tga"))
-                adapter.addElement(file);
+            adapter.addElement(file);
         }
     }
     
@@ -122,6 +145,16 @@ public class DialogPropertyImage extends javax.swing.JDialog implements IDialogR
         return DDSUtil.loadBufferedImage(DDSImage.read(buf));
     }
     
+    private void refreshFilter()
+    {
+        DefaultListModel<SFile> adapter = (DefaultListModel<SFile>)lstImages.getModel();
+        adapter.clear();
+        for (SFile file : mImages)
+        {
+            if (file.getFilePath().contains(txtSearch.getText()))
+                adapter.addElement(file);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -313,7 +346,12 @@ public class DialogPropertyImage extends javax.swing.JDialog implements IDialogR
 
     private void lstImagesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstImagesValueChanged
         
-        SFile s = (SFile)lstImages.getModel().getElementAt(lstImages.getSelectedIndex());
+        SFile s = null;
+        
+        if (lstImages.getSelectedIndex() != -1)
+        {
+            s = (SFile)lstImages.getModel().getElementAt(lstImages.getSelectedIndex());
+        }
         
         if (s != null)
             btnOpenDTV.setEnabled(true);

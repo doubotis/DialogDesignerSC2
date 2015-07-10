@@ -8,6 +8,7 @@ package com.doubotis.sc2dd.data;
 import com.doubotis.sc2dd.app.App;
 import com.doubotis.sc2dd.dialogs.DialogPropertySObject;
 import com.doubotis.sc2dd.dialogs.DialogPropertyText;
+import com.doubotis.sc2dd.ui.ImageCaching;
 import com.doubotis.sc2dd.ui.ImageRender;
 import com.doubotis.sc2dd.util.UIUtils;
 import com.mundi4.mpq.MpqEntry;
@@ -60,6 +61,8 @@ public class SDialog extends SObject implements IProperty, IPropertyMore, IDrawa
     
     public SDialog(String name)
     {
+        DefaultProperties defaults = DefaultProperties.defaultProperties();
+        
         this.name = name;
         this.relativeDialog = SDialog.NONE;
         this.visibility = true;
@@ -67,12 +70,12 @@ public class SDialog extends SObject implements IProperty, IPropertyMore, IDrawa
         this.size = new SSize(200, 200);
         this.offset = new SPoint(50, 50);
         this.guid = new Guid(UUID.randomUUID());
-        this.title = new SText("");
-        this.backgroundImage = SImage.NONE;
+        this.title = new SText("");        
         this.backgroundImageType = SImageType.Border;
         this.backgroundVisibility = true;
         this.transparency = 0;
         this.zChannel = 512;
+        this.backgroundImage = (SImage)defaults.getDefault("dialog.appareance.background.image");
     }
     
     public SDialog()
@@ -153,7 +156,8 @@ public class SDialog extends SObject implements IProperty, IPropertyMore, IDrawa
         if (this.visibility == false)
             return;
         
-        canvas.setClip(this.offset.x, this.offset.y, this.size.width, this.size.height);
+        SRect locationToDraw = manageAnchorInside(new SSize(width, height), this.anchor);
+        canvas.setClip(locationToDraw.origin.x, locationToDraw.origin.y, locationToDraw.size.width, locationToDraw.size.height);
         
         float alpha = 1f - (this.transparency / 100f);
         if (alpha > 1) alpha = 1; if (alpha < 0) alpha = 0;     // Protection, AlphaComposite cannot support out of range values.
@@ -175,12 +179,17 @@ public class SDialog extends SObject implements IProperty, IPropertyMore, IDrawa
         {
             try
             {
-                MpqFile mpq = new MpqFile(this.backgroundImage.imagePath);
-                MpqEntry entry = mpq.getEntry(this.backgroundImage.mod);
-                BufferedImage img = UIUtils.imageFromImage(mpq.getInputStream(entry));
+                BufferedImage img = ImageCaching.getCache().retreive(this.backgroundImage.imagePath + "|" + this.backgroundImage.mod);
+                if (img == null)
+                {
+                    MpqFile mpq = new MpqFile(this.backgroundImage.imagePath);
+                    MpqEntry entry = mpq.getEntry(this.backgroundImage.mod);
+                    img = UIUtils.imageFromImage(mpq.getInputStream(entry));
+                    ImageCaching.getCache().storeImage(this.backgroundImage.imagePath + "|" + this.backgroundImage.mod, img);
+                }
                 ImageRender ir = new ImageRender(borderType, img, false, ImageRender.ButtonDesignState.None);
                 BufferedImage resultImg = ir.getRenderImage(this.size);
-                canvas.drawImage(resultImg, this.offset.x, this.offset.y, null);
+                canvas.drawImage(resultImg, locationToDraw.origin.x, locationToDraw.origin.y, null);
 
             } catch (Exception e) {}
         }
@@ -188,7 +197,7 @@ public class SDialog extends SObject implements IProperty, IPropertyMore, IDrawa
         canvas.setClip(0, 0, width, height);
         
         // Loop for dialog items.
-        canvas.translate(this.offset.x, this.offset.y);
+        canvas.translate(locationToDraw.origin.x, locationToDraw.origin.y);
         canvas.setClip(0, 0, this.size.width, this.size.height);
         
         List<SDialogItem> dialogItems = getDialogItemsForDialog(this);
@@ -197,11 +206,64 @@ public class SDialog extends SObject implements IProperty, IPropertyMore, IDrawa
             di.onDraw(canvas, paint, null, this.size.width, this.size.height);
         }
         canvas.setClip(0, 0, width, height);
-        canvas.translate(-this.offset.x, -this.offset.y);
+        canvas.translate(-locationToDraw.origin.x, -locationToDraw.origin.y);
         
         ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
         canvas.setComposite(ac);
         
+    }
+    
+    private SRect manageAnchorInside(SSize size, SAnchor anchor)
+    {
+        int x = 0;
+        int y = 0;
+        
+        if (anchor == SAnchor.TopLeft)
+        {
+            x = 0 + this.offset.x;
+            y = 0 + this.offset.y;
+        }
+        else if (anchor == SAnchor.Top)
+        {
+            x = (size.width / 2) - (this.size.width / 2) + this.offset.x;
+            y = 0 + this.offset.y;
+        }
+        else if (anchor == SAnchor.TopRight)
+        {
+            x = size.width - this.size.width - this.offset.x;
+            y = 0 + this.offset.y;
+        }
+        else if (anchor == SAnchor.Left)
+        {
+            x = 0 + this.offset.x;
+            y = (size.height / 2) - (this.size.height / 2) + this.offset.y;
+        }
+        else if (anchor == SAnchor.Center)
+        {
+            x = (size.width / 2) - (this.size.width / 2) + this.offset.x;
+            y = (size.height / 2) - (this.size.height / 2) + this.offset.y;
+        }
+        else if (anchor == SAnchor.Right)
+        {
+            x = size.width - this.size.width - this.offset.x;
+            y = (size.height / 2) - (this.size.height / 2) + this.offset.y;
+        }
+        else if (anchor == SAnchor.BottomLeft)
+        {
+            x = 0 + this.offset.x;
+            y = size.height - this.size.height - this.offset.y;
+        }
+        else if (anchor == SAnchor.Bottom)
+        {
+            x = (size.width / 2) - (this.size.width / 2) + this.offset.x;
+            y = size.height - this.size.height - this.offset.y;
+        }
+        else if (anchor == SAnchor.BottomRight)
+        {
+            x = size.width - this.size.width - this.offset.x;
+            y = size.height - this.size.height - this.offset.y;
+        }
+        return new SRect(x,y, this.size.width, this.size.height);
     }
     
     private List<SDialogItem> getDialogItemsForDialog(SDialog dialog)

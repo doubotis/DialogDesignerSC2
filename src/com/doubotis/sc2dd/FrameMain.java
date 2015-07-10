@@ -21,6 +21,7 @@ import com.doubotis.sc2dd.data.Project;
 import com.doubotis.sc2dd.data.SPoint;
 import com.doubotis.sc2dd.data.PropertyObject;
 import com.doubotis.sc2dd.data.SDialog;
+import com.doubotis.sc2dd.data.SDialogItemButton;
 import com.doubotis.sc2dd.data.SDialogItemImage;
 import com.doubotis.sc2dd.data.SDialogItemLabel;
 import com.doubotis.sc2dd.data.SDialogItemList;
@@ -29,6 +30,7 @@ import com.doubotis.sc2dd.data.SSize;
 import com.doubotis.sc2dd.data.SText;
 import com.doubotis.sc2dd.dialogs.DialogPropertySObject;
 import com.doubotis.sc2dd.locales.LocaleUtils;
+import com.doubotis.sc2dd.ui.ImageCaching;
 import com.doubotis.sc2dd.ui.JPageDrawer;
 import com.doubotis.sc2dd.util.ResourceUtils;
 import java.awt.Component;
@@ -711,6 +713,11 @@ public class FrameMain extends javax.swing.JFrame {
         toolBtnCreateButton.setFocusable(false);
         toolBtnCreateButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         toolBtnCreateButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBtnCreateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toolBtnCreateButtonActionPerformed(evt);
+            }
+        });
         jToolBar2.add(toolBtnCreateButton);
 
         toolBtnCreateTextField.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/doubotis/sc2dd/res/comp_textbox.png"))); // NOI18N
@@ -1188,6 +1195,8 @@ public class FrameMain extends javax.swing.JFrame {
         if (App.getApp().getOpenedProject() == null)
             return;
         
+        ImageCaching.getCache().clearCache();
+        
         App.getApp().getOpenedProject().setCurrentPage(App.getApp().getOpenedProject().getPages().get(tbpPages.getSelectedIndex()));
         
         SObjectAdapter adapter = new SObjectAdapter(App.getApp().getOpenedProject().getCurrentPage());
@@ -1197,6 +1206,7 @@ public class FrameMain extends javax.swing.JFrame {
         refreshPropertyForObject(null);
         
         refreshCanvas();
+        
     }//GEN-LAST:event_tbpPagesStateChanged
 
     private void tsmiOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tsmiOptionsActionPerformed
@@ -1204,6 +1214,9 @@ public class FrameMain extends javax.swing.JFrame {
         DialogOptions frm = new DialogOptions(this, true);
         frm.setLocationRelativeTo(this);
         frm.setVisible(true);
+        
+        // Refresh rendering
+        refreshCanvas();
         
     }//GEN-LAST:event_tsmiOptionsActionPerformed
 
@@ -1227,6 +1240,11 @@ public class FrameMain extends javax.swing.JFrame {
        
         System.exit(0);
     }//GEN-LAST:event_tsmiExitActionPerformed
+
+    private void toolBtnCreateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toolBtnCreateButtonActionPerformed
+        
+        addSC2Object(SDialogItemButton.class);
+    }//GEN-LAST:event_toolBtnCreateButtonActionPerformed
 
     /**
      * @param args the command line arguments

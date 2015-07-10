@@ -45,7 +45,11 @@ public class ColorUtils
                 Color c = Color.WHITE;
                 return c;
             }
-            
         }
+    }
+    
+    public static String fromColor(Color c)
+    {
+        return Integer.toHexString(c.getRGB());
     }
 }

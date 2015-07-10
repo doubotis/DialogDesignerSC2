@@ -37,7 +37,7 @@ public class DialogDesignerSC2 {
         // Prepares the Application.
         App.getApp();
         
-        DialogWaiting dw = new DialogWaiting(null, true);
+        DialogWaiting dw = new DialogWaiting(null, false);
         dw.setLocationRelativeTo(null);
         dw.show();
         

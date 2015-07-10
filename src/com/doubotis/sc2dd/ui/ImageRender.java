@@ -440,15 +440,6 @@ public class ImageRender
         
         angle = (float)Math.toRadians(angle);
         
-        /*AffineTransform transform = new AffineTransform();
-        transform.rotate(Math.toRadians(angle), img.getWidth()/2, img.getHeight()/2);
-        //transform.rotate(Math.toRadians(angle));
-        AffineTransformOp op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
-        BufferedImage dst = new BufferedImage(img.getHeight(), img.getWidth(), BufferedImage.TYPE_INT_ARGB);
-        BufferedImage img2 = op.filter(img, dst);
-        return img2;*/
-        
-        System.out.println(" av: " + System.currentTimeMillis());
         double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
         int w = img.getWidth(), h = img.getHeight();
         int neww = (int)Math.floor(w*cos+h*sin), newh = (int)Math.floor(h*cos+w*sin);
@@ -457,8 +448,7 @@ public class ImageRender
         g.translate((neww-w)/2, (newh-h)/2);
         g.rotate(angle, w/2, h/2);
         g.drawImage(img, 0, 0, null);
-        System.out.println( " ap: " + System.currentTimeMillis());
-        //g.dispose();
+        g.dispose();
         return result;
     }
     

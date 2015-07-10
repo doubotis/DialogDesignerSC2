@@ -9,12 +9,15 @@ import com.doubotis.sc2dd.app.App;
 import com.doubotis.sc2dd.data.IDrawable;
 import com.doubotis.sc2dd.data.SDialog;
 import com.doubotis.sc2dd.data.SObject;
+import com.doubotis.sc2dd.util.ColorUtils;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 /**
@@ -43,8 +46,31 @@ public class JPageDrawer extends JPanel
         System.out.println(" -Draw- Finished drawing");
         
         // Now draw the whole buffer into the panel.
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getWidth(), getHeight());
+        String backgroundPref = App.getApp().getPreferences().getString("options.editor.background", "color:000000");
+        if (backgroundPref.startsWith("color"))
+        {
+            backgroundPref = backgroundPref.replace("color:ff", "");
+            g.setColor(ColorUtils.fromString(backgroundPref));
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+        else
+        {
+            try
+            {
+                backgroundPref = backgroundPref.replace("bg:", "");
+                BufferedImage background = ImageIO.read(new File(backgroundPref));
+                g.drawImage(background, 0, 0, null);
+            
+            } catch (Exception e)
+            {
+                // Fallback, print a black background.
+                g.setColor(Color.BLACK);
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
+        }
+        
+        
+        
         g.drawImage(buffer, 0, 0, null);
     }
 }

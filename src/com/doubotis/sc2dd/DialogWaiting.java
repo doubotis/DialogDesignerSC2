@@ -31,14 +31,13 @@ public class DialogWaiting extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         lblWaiting = new javax.swing.JLabel();
 
-        setModalityType(java.awt.Dialog.ModalityType.MODELESS);
         setUndecorated(true);
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lblWaiting.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblWaiting.setText("Preloading MPQ...");
+        lblWaiting.setText("Preloading some MPQ files...");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

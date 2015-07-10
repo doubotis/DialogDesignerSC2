@@ -26,7 +26,8 @@ import java.util.logging.Logger;
 public class Preferences
 {
     private static Preferences SINGLETON = null;
-    private static final String PROP_FILENAME = "config.properties";
+    public static final String FILENAME_PROPS = "config.properties";
+    public static final String FILENAME_DEFAULTS = "defaults.properties";
     private Properties mProps;
     
     /*public static Preferences getPreferences()
@@ -42,7 +43,7 @@ public class Preferences
         
         try
         {
-            InputStream is = new FileInputStream(new File(PreferenceUtils.getUserDataDirectory() + PROP_FILENAME));
+            InputStream is = new FileInputStream(new File(PreferenceUtils.getUserDataDirectory() + FILENAME_PROPS));
             mProps.load(is);
             
         } catch (Exception e)
@@ -109,6 +110,22 @@ public class Preferences
         return theList;
     }
     
+    public boolean getBoolean(String key, boolean defaultValue)
+    {
+        String a = mProps.getProperty(key, " " + defaultValue);
+        
+        try
+        {
+            Boolean i = Boolean.parseBoolean(a);
+            return i;
+            
+        } catch (NumberFormatException nfe)
+        {
+            return defaultValue;
+        }
+        
+    }
+    
     public static class Editor
     {
         private Preferences mPrefs;
@@ -141,6 +158,11 @@ public class Preferences
             mPrefs.mProps.setProperty(key, value);
         }
         
+        public void putBoolean(String key, boolean value)
+        {
+            mPrefs.mProps.setProperty(key, "" + value);
+        }
+        
         public void remove(String key)
         {
             mPrefs.mProps.remove(key);
@@ -151,7 +173,7 @@ public class Preferences
                 File dir = new File(PreferenceUtils.getUserDataDirectory());
                 if (!dir.exists())
                     dir.mkdirs();
-                File f = new File(PreferenceUtils.getUserDataDirectory() + PROP_FILENAME);
+                File f = new File(PreferenceUtils.getUserDataDirectory() + FILENAME_PROPS);
                 if(!f.exists())
                 {
                     try {
