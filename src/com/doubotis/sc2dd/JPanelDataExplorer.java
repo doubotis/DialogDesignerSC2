@@ -1,0 +1,247 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.doubotis.sc2dd;
+
+import com.doubotis.sc2dd.data.SFile;
+import com.doubotis.sc2dd.data.SResource;
+import com.doubotis.sc2dd.app.App;
+import com.doubotis.sc2dd.util.UIUtils;
+import com.mundi4.mpq.MpqEntry;
+import com.mundi4.mpq.MpqFile;
+import ddsutil.DDSUtil;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.FileImageInputStream;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
+import jogl.DDSImage;
+
+/**
+ *
+ * @author Christophe
+ */
+public class JPanelDataExplorer extends javax.swing.JPanel {
+
+    public static final int TEXTS = 1000;
+    public static final int IMAGES = 1001;
+    public static final int XML_LAYOUTS = 1002;
+    public static final int STYLES = 1003;
+    
+    public int mComponentType = -1;
+    private JTextArea mTextArea = null;
+    
+    /**
+     * Creates new form JPanelDataExplorer
+     */
+    public JPanelDataExplorer(int componentType) {
+        initComponents();
+        
+        mComponentType = componentType;
+        
+        if (componentType == TEXTS)
+        {
+            TitledBorder tb = (TitledBorder)pnlGroup.getBorder();
+            tb.setTitle("List of Texts");
+        }
+        else if (componentType == IMAGES)
+        {
+            TitledBorder tb = (TitledBorder)pnlGroup.getBorder();
+            tb.setTitle("List of Images");
+        }
+        else if (componentType == XML_LAYOUTS)
+        {
+            TitledBorder tb = (TitledBorder)pnlGroup.getBorder();
+            tb.setTitle("List of XML Layouts");
+        }
+    }
+    
+    public void setPreviewVisibility(boolean showPreview)
+    {
+        pnlPreview.setVisible(showPreview);
+    }
+    
+    public void sendResources(List<SResource> resources)
+    {
+        DefaultListModel<SResource> adapter = new DefaultListModel<SResource>();
+        lstData.setModel(adapter);
+        
+        for (SResource resource : resources)
+        {
+            adapter.addElement(resource);
+        }
+    }
+    
+    private BufferedImage imageFromImage(InputStream is) throws IOException
+    {
+        Vector<Byte> byteV = new Vector<Byte>();
+        byte[] tmp1 = new byte[1024];
+        while (true) {
+            int r = is.read(tmp1, 0, 1024);
+            if (r == -1) break;
+            for (int i=0; i<r; i++) {
+                byteV.add(tmp1[i]);
+            }
+        }
+        byte[] tmp2 = new byte[byteV.size()];
+        for (int i=0; i<byteV.size(); i++) {
+            tmp2[i] = byteV.elementAt(i);
+        }
+        ByteBuffer buf = ByteBuffer.wrap(tmp2);
+
+        return DDSUtil.loadBufferedImage(DDSImage.read(buf));
+        //return DDSUtil.loadBufferedImage(DDSImage.read(buf));
+        
+        /*Iterator<ImageReader> iterator = ImageIO.getImageReadersBySuffix("dds");
+        if (iterator.hasNext()){
+                ImageReader imageReader = iterator.next();
+                imageReader.setInput(is);
+                String format = imageReader.getFormatName();
+                /*Viewer.ColorType type = 
+                if (type == Viewer.ColorType.YCOCG) DDSUtil.decodeYCoCg(image);
+                if (type == Viewer.ColorType.YCOCG_SCALED) DDSUtil.decodeYCoCgScaled(image);
+                if (type == Viewer.ColorType.ALPHA_EXPONENT) DDSUtil.decodeAlphaExponent(image);
+                if (!alpha || !red || !green || !blue) DDSUtil.showColors(image, alpha, red, green, blue);
+                item = new Viewer.Item(image, mipMapMax, file);*/
+                //return image;
+        //}
+        //return null;*/
+    }
+    
+    public String stringFromInputStream(InputStream in) throws IOException
+    {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        StringBuilder out = new StringBuilder();
+        String newLine = System.getProperty("line.separator");
+        String line;
+        while ((line = reader.readLine()) != null) {
+            out.append(line);
+            out.append(newLine);
+        }
+        return out.toString();
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        pnlGroup = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        lstData = new javax.swing.JList();
+        pnlPreview = new javax.swing.JScrollPane();
+        imgPreview = new javax.swing.JLabel();
+
+        pnlGroup.setBorder(javax.swing.BorderFactory.createTitledBorder("Image Property"));
+
+        lstData.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        lstData.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lstData.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lstDataValueChanged(evt);
+            }
+        });
+        jScrollPane2.setViewportView(lstData);
+
+        imgPreview.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        imgPreview.setText("Click a file on the left to display a preview.");
+        pnlPreview.setViewportView(imgPreview);
+
+        javax.swing.GroupLayout pnlGroupLayout = new javax.swing.GroupLayout(pnlGroup);
+        pnlGroup.setLayout(pnlGroupLayout);
+        pnlGroupLayout.setHorizontalGroup(
+            pnlGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlGroupLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pnlPreview, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        pnlGroupLayout.setVerticalGroup(
+            pnlGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGroupLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(pnlPreview)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pnlGroup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pnlGroup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void lstDataValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstDataValueChanged
+        
+        SResource s = (SResource)lstData.getModel().getElementAt(lstData.getSelectedIndex());
+        
+        UIUtils.ResourceType resType;
+        if (mComponentType == TEXTS)
+            resType = UIUtils.ResourceType.FONT;
+        else if (mComponentType == IMAGES)
+            resType = UIUtils.ResourceType.IMAGE;
+        else if (mComponentType == XML_LAYOUTS)
+            resType = UIUtils.ResourceType.XML;
+        else if (mComponentType == STYLES)
+            resType = UIUtils.ResourceType.STYLE;
+        else
+            resType = UIUtils.ResourceType.UNKNOWN;
+        
+        Component c = UIUtils.createComponentForResource(s, resType);
+        
+        pnlPreview.getViewport().setView(c);
+    }//GEN-LAST:event_lstDataValueChanged
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel imgPreview;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JList lstData;
+    private javax.swing.JPanel pnlGroup;
+    private javax.swing.JScrollPane pnlPreview;
+    // End of variables declaration//GEN-END:variables
+}
