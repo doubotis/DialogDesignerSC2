@@ -3,6 +3,8 @@
 ## Development Stage
 **Current Development Stage: 0, Pre-Alpha version**
 
+![Image](http://i.imgur.com/vf4wkPh.png)
+
 ### Summary
 * Interface Development Logic (Completed)
 * Interface Organization (Completed)
