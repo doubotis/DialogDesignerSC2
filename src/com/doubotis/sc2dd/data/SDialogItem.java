@@ -164,4 +164,57 @@ public class SDialogItem extends SObject implements IProperty, IPropertyMore, ID
         SRect rect = new SRect(new SPoint(this.offset.x, this.offset.y),new SSize(offsetWidth, offsetHeight));
         return rect;
     }
+    
+    protected SRect manageAnchorInside(SSize size, SAnchor anchor)
+    {
+        int x = 0;
+        int y = 0;
+        
+        if (anchor == SAnchor.TopLeft)
+        {
+            x = 0 + this.offset.x;
+            y = 0 + this.offset.y;
+        }
+        else if (anchor == SAnchor.Top)
+        {
+            x = (size.width / 2) - (this.size.width / 2) + this.offset.x;
+            y = 0 + this.offset.y;
+        }
+        else if (anchor == SAnchor.TopRight)
+        {
+            x = size.width - this.size.width - this.offset.x;
+            y = 0 + this.offset.y;
+        }
+        else if (anchor == SAnchor.Left)
+        {
+            x = 0 + this.offset.x;
+            y = (size.height / 2) - (this.size.height / 2) + this.offset.y;
+        }
+        else if (anchor == SAnchor.Center)
+        {
+            x = (size.width / 2) - (this.size.width / 2) + this.offset.x;
+            y = (size.height / 2) - (this.size.height / 2) + this.offset.y;
+        }
+        else if (anchor == SAnchor.Right)
+        {
+            x = size.width - this.size.width - this.offset.x;
+            y = (size.height / 2) - (this.size.height / 2) + this.offset.y;
+        }
+        else if (anchor == SAnchor.BottomLeft)
+        {
+            x = 0 + this.offset.x;
+            y = size.height - this.size.height - this.offset.y;
+        }
+        else if (anchor == SAnchor.Bottom)
+        {
+            x = (size.width / 2) - (this.size.width / 2) + this.offset.x;
+            y = size.height - this.size.height - this.offset.y;
+        }
+        else if (anchor == SAnchor.BottomRight)
+        {
+            x = size.width - this.size.width - this.offset.x;
+            y = size.height - this.size.height - this.offset.y;
+        }
+        return new SRect(x,y, this.size.width, this.size.height);
+    }
 }

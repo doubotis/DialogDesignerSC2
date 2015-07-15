@@ -9,8 +9,16 @@ import com.doubotis.sc2dd.app.App;
 import com.doubotis.sc2dd.app.Preferences;
 import static com.doubotis.sc2dd.app.Preferences.FILENAME_PROPS;
 import com.doubotis.sc2dd.util.PreferenceUtils;
+import com.doubotis.sc2dd.util.ResourceUtils;
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Properties;
 
@@ -32,16 +40,26 @@ public class DefaultProperties
         mDefaultProps = new Properties();
         try
         {
-            mDefaultProps.load(new FileInputStream(new File(PreferenceUtils.getUserDataDirectory() + Preferences.FILENAME_DEFAULTS)));
+            File f = new File(PreferenceUtils.getUserDataDirectory() + Preferences.FILENAME_DEFAULTS);
+            if (!f.exists())
+            {
+                // Copy the version inside /res package folders.
+                f.createNewFile();
+                Path src = Paths.get(ResourceUtils.getURLResource("defaults.properties").toURI());
+                Path dst = Paths.get(PreferenceUtils.getUserDataDirectory() + Preferences.FILENAME_DEFAULTS);
+                Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
+            }
+        
+            mDefaultProps.load(new FileInputStream(f));
             
-        } catch (Exception e) {}
+        } catch (Exception e) { e.printStackTrace(); }
     }
     
     public SResource getDefault(String identifier)
     {
         if (identifier.endsWith("image"))
         {
-            String prop = mDefaultProps.getProperty(identifier, "Core.SC2Mod" + File.separator + "Base.SC2Assets|Assets\\Textures\\white32.dds");
+            String prop = mDefaultProps.getProperty(identifier, "Liberty.SC2Mod" + File.separator + "Base.SC2Assets|Assets\\Textures\\white32.dds");
             String[] strs = prop.split("\\|");
             SFile f = new SFile(findMPQ(strs[0]).getAbsolutePath(), strs[1]);
             SImage image = new SImage(f.getFilePath(), f.getMpqFilePath());

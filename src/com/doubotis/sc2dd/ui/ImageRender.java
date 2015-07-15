@@ -68,9 +68,10 @@ public class ImageRender
     protected ButtonDesignState m_ButtonState;
     protected boolean m_IsButton = false;
     protected boolean m_Pressed = false;
+    protected boolean m_Tiled = false;
 
     // CONSTRUCTOR - DESTRUCTOR
-    public ImageRender(BorderType p_TypeRender, BufferedImage p_Image, boolean p_IsButton, ButtonDesignState p_Bs)
+    public ImageRender(BorderType p_TypeRender, BufferedImage p_Image, boolean p_Tiled, boolean p_IsButton, ButtonDesignState p_Bs)
     {
         if (p_Image != null)
             m_OriginalImage = p_Image;
@@ -78,6 +79,7 @@ public class ImageRender
         m_ButtonState = p_Bs;
         m_IsButton = p_IsButton;
         m_TypeRender = p_TypeRender;
+        m_Tiled = p_Tiled;
 
         build();
     }
@@ -363,7 +365,24 @@ public class ImageRender
 
         if (m_TypeRender == BorderType.Normal)
         {
-            finalGraphics.drawImage(m_OriginalImage, 0, 0, p_Size.width, p_Size.height, null);
+            if (m_Tiled == false)
+            {
+                finalGraphics.drawImage(m_OriginalImage, 0, 0, p_Size.width, p_Size.height, null);
+            }
+            else
+            {
+                int width = p_Size.width;
+                int height = p_Size.height;
+                int imageW = m_OriginalImage.getWidth();
+                int imageH = m_OriginalImage.getHeight();
+                for (int x = 0; x < width; x += imageW)
+                {
+                    for (int y = 0; y < height; y += imageH)
+                    {
+                        finalGraphics.drawImage(m_OriginalImage, x, y, null);
+                    }
+                }
+            }
             return b;
         }
 

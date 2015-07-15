@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.doubotis.sc2dd;
+package com.doubotis.sc2dd.dialogs;
 
+import com.doubotis.sc2dd.data.SColor;
 import java.awt.Color;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 
@@ -12,14 +13,14 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
  *
  * @author Christophe
  */
-public class DialogColor extends javax.swing.JDialog {
+public class DialogPropertyColor extends javax.swing.JDialog implements IDialogReturn {
     
     private Color mSelectedColor;
 
     /**
      * Creates new form DialogColor
      */
-    public DialogColor(java.awt.Frame parent, boolean modal) {
+    public DialogPropertyColor(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         
@@ -147,20 +148,21 @@ public class DialogColor extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DialogColor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DialogPropertyColor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DialogColor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DialogPropertyColor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DialogColor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DialogPropertyColor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DialogColor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DialogPropertyColor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                DialogColor dialog = new DialogColor(new javax.swing.JFrame(), true);
+                DialogPropertyColor dialog = new DialogPropertyColor(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -178,4 +180,17 @@ public class DialogColor extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JColorChooser jccColor;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public Object showDialog() {
+        
+        setVisible(true);
+        return new SColor(mSelectedColor);
+    }
+
+    @Override
+    public void setEditingInfo(Object o) {
+        
+        mSelectedColor = ((SColor)o).getColor();
+    }
 }

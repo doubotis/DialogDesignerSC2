@@ -5,6 +5,7 @@
  */
 package com.doubotis.sc2dd;
 
+import com.doubotis.sc2dd.dialogs.DialogPropertyColor;
 import com.doubotis.sc2dd.adapters.CheckedListAdapter;
 import com.doubotis.sc2dd.adapters.CheckedListRenderer;
 import com.doubotis.sc2dd.app.Preferences;
@@ -435,7 +436,7 @@ public class DialogOptions extends javax.swing.JDialog {
         if (!pnlColor.isEnabled())
             return;
         
-        DialogColor dc = new DialogColor(null, true);
+        DialogPropertyColor dc = new DialogPropertyColor(null, true);
         dc.setSelectedColor(pnlColor.getBackground());
         dc.show();
 

@@ -710,6 +710,7 @@ public class FrameMain extends javax.swing.JFrame {
         jToolBar2.add(toolBtnCreateLabel);
 
         toolBtnCreateButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/doubotis/sc2dd/res/comp_button.png"))); // NOI18N
+        toolBtnCreateButton.setEnabled(false);
         toolBtnCreateButton.setFocusable(false);
         toolBtnCreateButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         toolBtnCreateButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -721,12 +722,14 @@ public class FrameMain extends javax.swing.JFrame {
         jToolBar2.add(toolBtnCreateButton);
 
         toolBtnCreateTextField.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/doubotis/sc2dd/res/comp_textbox.png"))); // NOI18N
+        toolBtnCreateTextField.setEnabled(false);
         toolBtnCreateTextField.setFocusable(false);
         toolBtnCreateTextField.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         toolBtnCreateTextField.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar2.add(toolBtnCreateTextField);
 
         toolBtnCreateList.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/doubotis/sc2dd/res/comp_listbox.png"))); // NOI18N
+        toolBtnCreateList.setEnabled(false);
         toolBtnCreateList.setFocusable(false);
         toolBtnCreateList.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         toolBtnCreateList.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

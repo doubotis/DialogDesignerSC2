@@ -156,6 +156,8 @@ public class SDialog extends SObject implements IProperty, IPropertyMore, IDrawa
         if (this.visibility == false)
             return;
         
+        System.out.println(" -Draw- Dialog Timestamp Start " + System.currentTimeMillis());
+        
         SRect locationToDraw = manageAnchorInside(new SSize(width, height), this.anchor);
         canvas.setClip(locationToDraw.origin.x, locationToDraw.origin.y, locationToDraw.size.width, locationToDraw.size.height);
         
@@ -187,7 +189,7 @@ public class SDialog extends SObject implements IProperty, IPropertyMore, IDrawa
                     img = UIUtils.imageFromImage(mpq.getInputStream(entry));
                     ImageCaching.getCache().storeImage(this.backgroundImage.imagePath + "|" + this.backgroundImage.mod, img);
                 }
-                ImageRender ir = new ImageRender(borderType, img, false, ImageRender.ButtonDesignState.None);
+                ImageRender ir = new ImageRender(borderType, img, false, false, ImageRender.ButtonDesignState.None);
                 BufferedImage resultImg = ir.getRenderImage(this.size);
                 canvas.drawImage(resultImg, locationToDraw.origin.x, locationToDraw.origin.y, null);
 
@@ -210,6 +212,8 @@ public class SDialog extends SObject implements IProperty, IPropertyMore, IDrawa
         
         ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
         canvas.setComposite(ac);
+        
+        System.out.println(" -Draw- Dialog Timestamp End " + System.currentTimeMillis());
         
     }
     

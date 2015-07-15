@@ -25,4 +25,13 @@ public class ResourceUtils {
         ImageIcon ic = new ImageIcon(url);
         return ic;
     }
+    
+    public static URL getURLResource(String name)
+    {
+        URL url = ResourceUtils.class.getResource("../res/" + name);
+        if (url == null)
+            return null;
+        
+        return url;
+    }
 }
